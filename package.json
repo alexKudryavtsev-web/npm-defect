@@ -1,17 +1,19 @@
 {
-  "name": "parser",
+  "name": "npm-defect",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "node app.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cli-spinner": "^0.2.10",
-    "nodemon": "^2.0.19",
     "puppeteer": "^15.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
   }
 }

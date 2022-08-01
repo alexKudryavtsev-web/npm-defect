@@ -10,3 +10,8 @@ Which package is considered defective? It is considered defective if it meets tw
 - Has no dependents
 - Has over 20 dependencies
 
+Usage:
+
+```
+npx npm-defect "react"
+```
