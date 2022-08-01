@@ -1,14 +1,33 @@
+import { Spinner } from "cli-spinner";
 import { launch } from "puppeteer";
 
 const packageName = process.argv[2] || "math_progression";
 
-async function estimate(packageName) {
+start(packageName);
+
+async function start(packageName) {
   console.log("\x1b[36m", "Packet information collection begins:");
+
+  let spinner = Spinner();
+
+  spinner.start();
 
   const info = await parseInfoAboutPackage(packageName);
 
-  console.log("\x1b[36m", "Collected. Data analysis:");
+  spinner.stop();
 
+  console.log("\x1b[36m", "\n Result:");
+
+  const reason = estimate(info);
+
+  if (reason.length >= 2) {
+    console.log("\x1b[31m", `Defect package: ${reason.join(", ")}`);
+  } else {
+    console.log("\x1b[32m", "OK");
+  }
+}
+
+function estimate(info) {
   const reason = [];
 
   if (!info.githubLink) {
@@ -31,14 +50,8 @@ async function estimate(packageName) {
     reason.push("last updated over a year ago");
   }
 
-  if (reason < 2) {
-    console.log("\x1b[32m", "OK");
-  } else {
-    console.log("\x1b[31m", `Defect package: ${reason.join(", ")}`);
-  }
+  return reason;
 }
-
-estimate(packageName);
 
 async function parseInfoAboutPackage(name) {
   const URL = `https://www.npmjs.com/package/${name}`;
@@ -90,9 +103,8 @@ function parseAmountDependencies() {
   try {
     const element = document.querySelector("#package-tab-dependencies > span");
 
-    console.log(element);
     return Number.parseInt(
-      element.innerHTML.match(/<svg.*\/svg>(\d*)/)[1].replace(/,/g, "")
+      element.innerHTML.replace(/,/g, "").match(/<svg.*\/svg>(\d*)/)[1]
     );
   } catch (error) {
     return null;
@@ -104,7 +116,7 @@ function parseAmountDependents() {
     const element = document.querySelector("#package-tab-dependents > span");
 
     return Number.parseInt(
-      element.innerHTML.match(/<svg.*\/svg>(\d*)/)[1].replace(/,/g, "")
+      element.innerHTML.replace(/,/g, "").match(/<svg.*\/svg>(\d*)/)[1]
     );
   } catch (error) {
     return null;
@@ -141,5 +153,3 @@ function checkDateLastPublication(date) {
 
   return date > yearAgo;
 }
-
-checkDateLastPublication();
